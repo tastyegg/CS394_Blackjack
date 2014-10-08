@@ -1,5 +1,13 @@
-import Foundation
+//
+//  BlackjackSystem.swift
+//  testAbus
+//
+//  Created by Abus on 10/7/14.
+//  Copyright (c) 2014 Abus. All rights reserved.
+//
+
 import UIKit
+import Foundation
 
 class Card {
     enum Rank:Int {
@@ -63,7 +71,7 @@ class Deck {
             for x in Card.Rank.Ace.toRaw() ... Card.Rank.King.toRaw() {
                 cards.append( Card(rank: Card.Rank.fromRaw(x)!, suit: Card.Suit.fromRaw(y)!) )
             }
-        }       
+        }
     }
 }
 
@@ -164,20 +172,26 @@ class Dealer:Hand {
             hit()
         }
         if total < 21 {
-            stand() //because the dealer haven't stood yet since he didn't stand while hitting 
+            stand() //because the dealer haven't stood yet since he didn't stand while hitting
         }
     }
 }
 
 class GameTable {
+    var masterUI: ViewController
+    var textOption: UITextView
+    
     var players = [Player]()
     var dealer:Dealer
     var playerIdx = 0
     var shoe:Shoe
     var gameNumber = 1
     
-    init(numberOfPlayers:Int = 3, numberOfDecks:Int = 4) {
-        shoe = Shoe(deckCount: numberOfDecks)
+    init(numberOfPlayers:Int = 3, deckCount:Int = 3, textOption: UITextView, masterUI: ViewController) {
+        self.textOption = textOption
+        self.masterUI = masterUI
+        
+        shoe = Shoe(deckCount: deckCount)
         dealer = Dealer(shoe: shoe)
         for x in 0 ... numberOfPlayers - 1 {
             players.append(Player(shoe: shoe, gametable: self))
@@ -212,41 +226,41 @@ class GameTable {
     }
     
     func hit() {
-        println("(Hit)")
+        textOption.text = "Player \(playerIdx + 1): Hit\n"
         players[playerIdx].hit()
         statDisplay()
     }
     
     func stand() {
-        println("(Stand)")
+        textOption.text = "Player \(playerIdx + 1): Stand\n"
         players[playerIdx].stand()
         statDisplay()
     }
     
     func statDisplay() {
-        print("Dealer has: ")
+        textOption.text = "\(textOption.text)Dealer has: "
         for var x = 0; x < dealer.cards.count; x++ {
             if !(x == 0 && playerIdx != players.count) {
-                print("\(dealer.cards[x].getName()), ")
+                textOption.text = "\(textOption.text)\(dealer.cards[x].getName()), "
             }
             else {
-                print("N/A, ")
+                textOption.text = "\(textOption.text)Unknown Card, "
             }
         }
-        println("in total: \(dealer.total)")
+        textOption.text = "\(textOption.text)in total: \(dealer.total)\n"
         
         for var y = 0; y < players.count; y++ {
-            print("Player \(y + 1) has: ")
+            textOption.text = "\(textOption.text)Player \(y + 1) has: "
             for var x = 0; x < players[y].cards.count; x++ {
-                print("\(players[y].cards[x].getName()), ")
+                textOption.text = "\(textOption.text)\(players[y].cards[x].getName()), "
             }
-            println("in total: \(players[y].total) | $\(players[y].bet) / $\(players[y].money)")
+            textOption.text = "\(textOption.text)in total: \(players[y].total) | $\(players[y].bet) / $\(players[y].money)\n"
         }
         if playerIdx == players.count {
-            println("Game End")
+            textOption.text = "\(textOption.text)Game End\n"
         }
         else {
-            print("Player \(playerIdx + 1)’s Turn: ")
+            textOption.text = "\(textOption.text)Player \(playerIdx + 1)’s Turn"
         }
     }
     
@@ -277,21 +291,7 @@ class GameTable {
         }
         
         playerIdx = 0
-        startGame()
+        
+        masterUI.gameOver()
     }
 }
-
-var gametable:GameTable
-
-func hit() {
-    gametable.hit()
-}
-
-func stand() {
-    gametable.stand()
-}
-
-gametable = GameTable(numberOfPlayers: 1, numberOfDecks: 4)
-
-hit()
-stand()
