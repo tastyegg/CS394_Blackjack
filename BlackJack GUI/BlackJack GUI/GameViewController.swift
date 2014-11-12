@@ -250,15 +250,17 @@ class GameViewController: UIViewController {
 		var vc:ViewController = segue.destinationViewController as ViewController
 		var dealerValue = hands[5].determineValue()
 		for n in 0...3 {
-			var playerValue = hands[n].determineValue()
-			if (playerValue == 21 && hands[n].cards.count == 2) && !(hands[5].cards.count == 2 && dealerValue == 21) {
-				players[n].playerPocket += players[n].playerBet * 1.5
-			}
-			if playerValue < 22 && (playerValue < dealerValue || dealerValue > 21) {
-				players[n].playerPocket += players[n].playerBet
-			}
-			else if dealerValue < 22 && (dealerValue < playerValue || playerValue > 21) {
-				players[n].playerPocket -= players[n].playerBet
+			if !players[n].notPlaying {
+				var playerValue = hands[n].determineValue()
+				if (playerValue == 21 && hands[n].cards.count == 2) && !(hands[5].cards.count == 2 && dealerValue == 21) {
+					players[n].playerPocket += players[n].playerBet * 1.5
+				}
+				if playerValue < 22 && (playerValue < dealerValue || dealerValue > 21) {
+					players[n].playerPocket += players[n].playerBet
+				}
+				else if dealerValue < 22 && (dealerValue < playerValue || playerValue > 21) {
+					players[n].playerPocket -= players[n].playerBet
+				}
 			}
 		}
 		
