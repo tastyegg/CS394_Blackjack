@@ -1,0 +1,5 @@
+-Doesn't work outside iPhone
+
+-Names of players are customizable. Press on the text field containing "Player #" to change it.
+-In the lobby, where they're betting, players can stay or leave a game.
+-In the game, every player can hit or stand on their turn. But, when someone stands, they still hit/stand (I'm pretty lazy).
